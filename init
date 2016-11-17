@@ -1,0 +1,24 @@
+#!/bin/bash
+
+VOLUME_HOME="/var/lib/mysql"
+
+echo "=> Setting PHP upload_max_filesize to ${PHP_UPLOAD_MAX_FILESIZE}"
+echo "=> Setting PHP post_max_size to ${PHP_POST_MAX_SIZE}"
+sed -ri -e "s/^upload_max_filesize.*/upload_max_filesize = ${PHP_UPLOAD_MAX_FILESIZE}/" \
+    -e "s/^post_max_size.*/post_max_size = ${PHP_POST_MAX_SIZE}/" /etc/php5/apache2/php.ini
+
+if [[ ! -d $VOLUME_HOME/mysql ]]; then
+    echo "=> An empty or uninitialized MySQL volume $VOLUME_HOME"
+    echo "=> Installing MySQL ..."
+    mysql_install_db > /dev/null 2>&1
+    echo "=> Done!"  
+    /mysql_init.sh
+    rm -Rf /mysql_init.sh
+else
+    echo "=> Using an existing volume of MySQL"
+fi
+echo "=> Starting ssh"
+/usr/sbin/sshd -D &
+
+echo "=> Starting Supervisor"
+/usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf
