@@ -29,6 +29,8 @@ Test your deployment:
 
 Hello world!
 
+You can also map your own local directory for the webroot by using the -v switch
+-v ~/projects/www/:/var/www/html/
 
 Loading your custom PHP application
 -----------------------------------
