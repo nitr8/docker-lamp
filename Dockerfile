@@ -16,22 +16,20 @@ RUN apt-get update && \
   echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 # Add image configuration and scripts
-ADD start-apache.sh /etc/supervisor/start-apache.sh
-ADD start-mysql.sh /etc/supervisor/start-mysql.sh
-ADD init /init
-ADD config-mysql.cnf /etc/mysql/conf.d/my.cnf
-ADD config-apache.cnf /etc/apache2/sites-available/000-default.conf
-ADD sv-apache.conf /etc/supervisor/conf.d/apache.conf
-ADD sv-mysqld.conf /etc/supervisor/conf.d/mysqld.conf
+ADD scripts/start-apache.sh /etc/supervisor/start-apache.sh
+ADD scripts/start-mysql.sh /etc/supervisor/start-mysql.sh
+ADD scripts/mysql_init.sh /mysql_init.sh
+ADD scripts/init /init
+ADD configs/config-mysql.cnf /etc/mysql/conf.d/my.cnf
+ADD configs/config-apache.cnf /etc/apache2/sites-available/000-default.conf
+ADD configs/sv-apache.cnf /etc/supervisor/conf.d/apache.conf
+ADD configs/sv-mysql.cnf /etc/supervisor/conf.d/mysqld.conf
 RUN chmod 755 /init
+RUN chmod 755 /mysql_init.sh
 RUN chmod 755 /etc/supervisor/*.sh
 
 # Remove pre-installed database
 RUN rm -rf /var/lib/mysql/*
-
-# Add MySQL utils
-ADD mysql_init.sh /mysql_init.sh
-RUN chmod 755 /*.sh
 
 # config to enable .htaccess
 RUN a2enmod rewrite
