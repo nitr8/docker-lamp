@@ -1,4 +1,5 @@
 FROM ubuntu:trusty
+#FROM phusion/baseimage:0.9.10
 MAINTAINER Wayne Humphrey <wayne@humphrey.za.net>
 
 # Install packages
@@ -12,19 +13,19 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
 RUN apt-get update && \
-  apt-get -y install supervisor git apache2 libapache2-mod-php5 mysql-server php5-mysql pwgen php-apc php5-mcrypt php5-curl php5-gd openssh-server && \
+  apt-get -y install supervisor git apache2 libapache2-mod-php5 mysql-server php5-mysql pwgen php-apc php5-mcrypt php5-curl php5-gd openssh-server mlocate && \
   echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 # Add image configuration and scripts
 ADD scripts/start-apache.sh /etc/supervisor/start-apache.sh
 ADD scripts/start-mysql.sh /etc/supervisor/start-mysql.sh
 ADD scripts/mysql_init.sh /mysql_init.sh
-ADD scripts/init /init
+ADD scripts/init /sbin/init
 ADD configs/config-mysql.cnf /etc/mysql/conf.d/my.cnf
 ADD configs/config-apache.cnf /etc/apache2/sites-available/000-default.conf
 ADD configs/sv-apache.cnf /etc/supervisor/conf.d/apache.conf
 ADD configs/sv-mysql.cnf /etc/supervisor/conf.d/mysqld.conf
-RUN chmod 755 /init
+RUN chmod 755 /sbin/init
 RUN chmod 755 /mysql_init.sh
 RUN chmod 755 /etc/supervisor/*.sh
 
@@ -52,4 +53,9 @@ RUN echo "export VISIBLE=now" >> /etc/profile
 VOLUME  ["/etc/mysql", "/var/lib/mysql", "/var/www/html/" ]
 
 EXPOSE 22 80 3306
-CMD ["/init"]
+
+# Use baseimage-docker's init system.
+CMD ["/sbin/init"]
+
+# Clean up APT when done.
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
