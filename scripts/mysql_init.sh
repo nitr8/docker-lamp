@@ -24,6 +24,11 @@ if [ -f /mysql-setup.sh ] ; then
 	. /mysql-setup.sh
 fi
 
+if [ -f /var/www/html/vendor/cet/scripts/mysql-setup.sh ] ; then
+	echo "=> Intializing the database"
+	. /var/www/html/vendor/cet/scripts/mysql-setup.sh
+fi
+
 echo "=> Done!"
 
 echo "================================================"
