@@ -29,14 +29,13 @@ if [ -f /var/www/html/vendor/cet/scripts/mysql-setup.sh ] ; then
 	. /var/www/html/vendor/cet/scripts/mysql-setup.sh
 fi
 
-echo "=> Done!"
+echo "=> Shutting down MySQL"
+mysqladmin -uroot shutdown
 
+echo "=> Done!"
 echo "================================================"
-echo "You can now connect to this MySQL Server using:"
+echo "You can now connect to MySQL using:"
 echo "   mysql -uadmin -p$PASS -h<host> -P<port>"
 echo "Please remember to change the above password!"
 echo "MySQL user 'root' has no password"
 echo "================================================"
-
-echo "=> Shutting down MySQL"
-mysqladmin -uroot shutdown

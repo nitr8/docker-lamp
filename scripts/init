@@ -17,8 +17,6 @@ if [[ ! -d $VOLUME_HOME/mysql ]]; then
 else
     echo "=> Using an existing volume of MySQL"
 fi
-echo "=> Starting ssh"
+echo "=> Starting Supervisor & ssh"
 /usr/sbin/sshd -D &
-
-echo "=> Starting Supervisor"
 /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf
