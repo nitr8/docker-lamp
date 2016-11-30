@@ -2,6 +2,8 @@ FROM ubuntu:trusty
 #FROM phusion/baseimage:0.9.10
 MAINTAINER Wayne Humphrey <wayne@humphrey.za.net>
 
+LABEL version="1.0"
+
 # Install packages
 ENV DEBIAN_FRONTEND noninteractive
 ENV NOTVISIBLE "in users profile"
@@ -12,8 +14,9 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en  
 ENV LC_ALL en_US.UTF-8
 
-RUN apt-get update && \
-  apt-get -y install supervisor git apache2 libapache2-mod-php5 mysql-server php5-mysql pwgen php-apc php5-mcrypt php5-curl php5-gd openssh-server mlocate && \
+RUN apt-get update && apt-get upgrade -y -o Dpkg::Options::="--force-confold"
+
+RUN apt-get -y install supervisor git apache2 libapache2-mod-php5 mysql-server php5-mysql pwgen php-apc php5-mcrypt php5-curl php5-gd openssh-server mlocate && \
   echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 # Add image configuration and scripts
@@ -23,11 +26,22 @@ ADD scripts/mysql_init.sh /mysql_init.sh
 ADD scripts/init /sbin/init
 ADD configs/config-mysql.cnf /etc/mysql/conf.d/my.cnf
 ADD configs/config-apache.cnf /etc/apache2/sites-available/000-default.conf
-ADD configs/sv-apache.cnf /etc/supervisor/conf.d/apache.conf
-ADD configs/sv-mysql.cnf /etc/supervisor/conf.d/mysqld.conf
+#ADD configs/sv-apache.cnf /etc/supervisor/conf.d/apache.conf
+#ADD configs/sv-mysql.cnf /etc/supervisor/conf.d/mysql.conf
+ADD configs/supervisord.conf /etc/supervisor/supervisord.conf
 RUN chmod 755 /sbin/init
 RUN chmod 755 /mysql_init.sh
 RUN chmod 755 /etc/supervisor/*.sh
+
+#COPY
+#ENTRYPOINT
+#USER
+#WORKDIR
+#ARG
+#ONBUILD
+#STOPSIGNAL
+#HEALTHCHECK
+#SHELL
 
 # Remove pre-installed database
 RUN rm -rf /var/lib/mysql/*
@@ -52,7 +66,7 @@ RUN echo "export VISIBLE=now" >> /etc/profile
 # Add volumes for MySQL 
 VOLUME  ["/etc/mysql", "/var/lib/mysql", "/var/www/html/" ]
 
-EXPOSE 22 80 3306
+EXPOSE 22 80 3306 9001
 
 # Use baseimage-docker's init system.
 CMD ["/sbin/init"]
