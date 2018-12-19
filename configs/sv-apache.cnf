@@ -1,5 +1,0 @@
-[program:apache]
-command=/etc/supervisor/start-apache.sh
-numprocs=1
-autostart=true
-autorestart=true

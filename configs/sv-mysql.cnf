@@ -1,5 +1,0 @@
-[program:mysql]
-command=/etc/supervisor/start-mysql.sh
-numprocs=1
-autostart=true
-autorestart=true

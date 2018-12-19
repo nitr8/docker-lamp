@@ -1,7 +1,6 @@
 FROM ubuntu:trusty
-#FROM phusion/baseimage:0.9.10
+#FROM ubuntu:18.04
 MAINTAINER Wayne Humphrey <wayne@humphrey.za.net>
-
 LABEL version="1.0"
 
 # Install packages
@@ -26,22 +25,10 @@ ADD scripts/mysql_init.sh /mysql_init.sh
 ADD scripts/init /sbin/init
 ADD configs/config-mysql.cnf /etc/mysql/conf.d/my.cnf
 ADD configs/config-apache.cnf /etc/apache2/sites-available/000-default.conf
-#ADD configs/sv-apache.cnf /etc/supervisor/conf.d/apache.conf
-#ADD configs/sv-mysql.cnf /etc/supervisor/conf.d/mysql.conf
 ADD configs/supervisord.conf /etc/supervisor/supervisord.conf
 RUN chmod 755 /sbin/init
 RUN chmod 755 /mysql_init.sh
 RUN chmod 755 /etc/supervisor/*.sh
-
-#COPY
-#ENTRYPOINT
-#USER
-#WORKDIR
-#ARG
-#ONBUILD
-#STOPSIGNAL
-#HEALTHCHECK
-#SHELL
 
 # Remove pre-installed database
 RUN rm -rf /var/lib/mysql/*
